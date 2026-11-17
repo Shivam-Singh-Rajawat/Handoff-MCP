@@ -185,6 +185,17 @@ byId("lead").onchange = updateSequence;
 byId("review-mode").onchange = updateSequence;
 updateSequence();
 
+byId("import-issue").onclick = () => {
+  const button = byId("import-issue");
+  button.disabled = true;
+  act(async () => {
+    const result = await api("import-issue", { url: byId("issue-url").value });
+    byId("context").value = result.context;
+    byId("approve").checked = false;
+    status(result.truncated ? "Issue preview was shortened. Review it before sharing." : "Review the imported issue before sharing.");
+  }, "Loading the public issue from GitHub…").finally(() => { button.disabled = false; });
+};
+
 byId("file").onchange = () => {
   const file = byId("file").files[0];
   if (!file) return;

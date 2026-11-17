@@ -8,6 +8,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.responses import FileResponse, JSONResponse
 from starlette.routing import Route
 
+from .connectors import github_issue
 from .providers import provider_prefix
 from .workspace import MAX_CONTEXT, MAX_FILE, Workspace, attachment_context
 
@@ -58,6 +59,17 @@ def workspace_routes(handoffs):
         except ValueError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
 
+    async def import_issue(request):
+        try:
+            data = await payload(request)
+            url = data.get("url")
+            if not isinstance(url, str) or len(url) > 250:
+                raise ValueError("Enter a public GitHub issue URL.")
+            context = await run_in_threadpool(github_issue, url)
+            return JSONResponse({"context": context[:MAX_CONTEXT], "truncated": len(context) > MAX_CONTEXT})
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+
     async def runs(request):
         if request.method == "GET":
             return JSONResponse({"runs": await run_in_threadpool(workspace.recent),
@@ -96,6 +108,7 @@ def workspace_routes(handoffs):
         Route("/workspace.css", asset("workspace.css", "text/css")),
         Route("/workspace.js", asset("workspace.js", "text/javascript")),
         Route("/api/prepare", prepare, methods=["POST"]),
+        Route("/api/import-issue", import_issue, methods=["POST"]),
         Route("/api/runs", runs, methods=["GET", "POST"]),
         Route("/api/runs/{run_id}", detail),
         Route("/api/runs/{run_id}/retry", retry, methods=["POST"]),

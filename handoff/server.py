@@ -1,11 +1,15 @@
 """MCP tools for local stdio and authenticated single-tenant HTTP."""
+from contextlib import AsyncExitStack, asynccontextmanager
 import hmac
+import json
 import os
+import re
 from typing import Any
 
 import uvicorn
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
+from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse
 
 from .providers import Model
@@ -47,23 +51,61 @@ def create_server(handoffs: Handoffs, hosts: list[str] | None = None) -> FastMCP
     return mcp
 
 
-def http_app(handoffs: Handoffs, token: str, hosts: list[str]):
-    if len(token) < 32:
-        raise ValueError("HANDOFF_HTTP_TOKEN must contain at least 32 characters.")
+def http_app(handoffs: Handoffs, token: str, hosts: list[str],
+             accounts: dict[str, str] | None = None):
     if not hosts or "*" in "".join(hosts):
         raise ValueError("Set HANDOFF_HTTP_HOSTS to exact allowed Host header values.")
-    app = create_server(handoffs, hosts).streamable_http_app()
-    app.router.routes.extend(workspace_routes(handoffs))
+    if accounts is not None and not isinstance(accounts, dict):
+        raise ValueError("HANDOFF_ACCOUNTS must be a JSON object.")
+    tokens = {"owner": token}
+    for name, secret in (accounts or {}).items():
+        if not re.fullmatch(r"[a-z][a-z0-9_-]{0,31}", name) or name == "owner":
+            raise ValueError("Invalid workspace account name.")
+        tokens[name] = secret
+    if any(not isinstance(secret, str) or not re.fullmatch(r"[!-~]{32,}", secret)
+           for secret in tokens.values()):
+        raise ValueError("Workspace tokens must contain at least 32 printable ASCII characters.")
+    if len(set(tokens.values())) != len(tokens):
+        raise ValueError("Workspace tokens must be distinct.")
+
+    def workspace_app(store):
+        app = create_server(store, hosts).streamable_http_app()
+        app.router.routes.extend(workspace_routes(store))
+        return app
+
+    owner = workspace_app(handoffs)
+    workspaces = [(f"Bearer {token}".encode(), owner)]
+    for name, secret in tokens.items():
+        if name != "owner":
+            store = Handoffs(handoffs.path.parent / "accounts" / name / "history.sqlite",
+                             handoffs.providers)
+            workspaces.append((f"Bearer {secret}".encode(), workspace_app(store)))
     public_assets = {"/", "/workspace.css", "/workspace.js", "/healthz"}
-    authorization = f"Bearer {token}".encode()
+
+    @asynccontextmanager
+    async def lifespan(_):
+        async with AsyncExitStack() as stack:
+            for _, app in workspaces:
+                await stack.enter_async_context(app.router.lifespan_context(app))
+            yield
+
+    lifecycle = Starlette(lifespan=lifespan)
 
     async def authenticate(scope, receive, send):
+        if scope["type"] == "lifespan":
+            return await lifecycle(scope, receive, send)
+        app = owner
         if scope["type"] == "http" and scope["path"] not in public_assets:
             supplied = dict(scope["headers"]).get(b"authorization", b"")
-            if not hmac.compare_digest(supplied, authorization):
+            app = None
+            for authorization, workspace in workspaces:
+                if hmac.compare_digest(supplied, authorization):
+                    app = workspace
+            if app is None:
                 await PlainTextResponse("Unauthorized", status_code=401,
                                         headers={"WWW-Authenticate": "Bearer"})(scope, receive, send)
                 return
+
         async def protect_response(message):
             if message["type"] == "http.response.start":
                 message["headers"] = [*message.get("headers", []), (b"cache-control", b"no-store")]
@@ -80,5 +122,9 @@ def serve_http(handoffs: Handoffs, host: str, port: int):
     if hosts is None:
         hosts = os.getenv("RENDER_EXTERNAL_HOSTNAME") or f"localhost:{port},127.0.0.1:{port}"
     hosts = hosts.split(",")
-    app = http_app(handoffs, token, [entry.strip() for entry in hosts if entry.strip()])
+    try:
+        accounts = json.loads(os.getenv("HANDOFF_ACCOUNTS", "{}"))
+    except json.JSONDecodeError:
+        raise ValueError("HANDOFF_ACCOUNTS must be valid JSON.") from None
+    app = http_app(handoffs, token, [entry.strip() for entry in hosts if entry.strip()], accounts)
     uvicorn.run(app, host=host, port=port)

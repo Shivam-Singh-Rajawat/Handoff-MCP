@@ -182,8 +182,19 @@ the original private inputs. The public walkthrough is scripted, and the offline
 workspace uses fixtures. Use live runs or the CLI benchmark for model-quality results.
 
 For an internet-facing deployment use HTTPS and keep the workspace token private.
-The token grants access to one shared workspace. Google sign-in, separate visitor
-accounts, and OAuth discovery for generic remote MCP clients are future work.
+The owner token opens the existing workspace. Add invite-only workspaces by
+setting the optional `HANDOFF_ACCOUNTS` secret to a JSON object mapping names to
+distinct random tokens, such as `{"reviewer":"<generated token>"}`. Generate each
+token with `python -c "import secrets; print(secrets.token_urlsafe(32))"`. Give
+each person only their own token. Browser history and remote MCP handoffs are
+isolated in separate SQLite databases. Keep the account name when rotating its
+token to keep its history. Remove the entry to revoke access on the next restart.
+Google sign-in and generic remote MCP OAuth remain future work.
+
+To import context, paste a public GitHub issue URL and select **Load issue into
+context**. The app fetches the issue title and body with a read-only GitHub
+request. Review the editable preview before sending it to either provider.
+This connector uses GitHub's unauthenticated public API.
 
 ## Free hosted deployment
 
@@ -223,6 +234,12 @@ after inactivity. SQLite history survives within an instance but can be erased
 on restart or redeploy. Export runs as JSON if you need to keep them. Use sample
 data for the free-tier demo because Google may use free-tier Gemini inputs and
 outputs to improve its products.
+
+For durable history, choose a paid Render web service and attach a persistent disk
+at `/data` before creating live runs. The Docker image defaults to
+`HANDOFF_DB=/data/history.sqlite`. Ensure the service user (UID 10001) can write
+the mounted path and confirm the database and invited workspaces survive a
+restart before uploading private material.
 
 To smoke-test credentials locally, set `HANDOFF_GPT_BACKEND=groq`,
 `GROQ_API_KEY`, `GROQ_MODEL`, `GEMINI_API_KEY`, and `GEMINI_MODEL` in your

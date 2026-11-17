@@ -48,6 +48,9 @@
           <label for="file">Context file</label>
           <input id="file" type="file" accept=".pdf,.csv,.txt,.md">
           <small>PDF, CSV, TXT or Markdown · Up to 2 MiB</small>
+          <label for="issue-url">Public GitHub issue URL</label>
+          <input id="issue-url" type="url" placeholder="https://github.com/owner/repo/issues/1">
+          <button id="import-issue" type="button">Load issue into context</button>
           <label for="context">Context to share</label>
           <textarea id="context" rows="7" maxlength="24000" placeholder="Paste notes or review extracted file content here"></textarea>
           <label class="check"><input id="approve" type="checkbox" required> <span id="approval-text"></span></label>

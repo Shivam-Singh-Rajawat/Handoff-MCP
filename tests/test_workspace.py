@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
+import httpx
 from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 from starlette.testclient import TestClient
@@ -100,3 +101,31 @@ class WorkspaceTests(unittest.TestCase):
                 self.assertTrue(all(step["model"] == "fixture-gemini" for step in run["steps"].values()))
             response = client.post("/api/runs", headers=self.headers, json=request | {"mode": ["single"]})
             self.assertEqual(response.status_code, 400)
+
+    def test_invited_workspace_cannot_read_owner_runs(self):
+        guest = {"Authorization": "Bearer " + "y" * 32}
+        app = http_app(self.store, self.token, ["testserver"], {"guest": "y" * 32})
+        with TestClient(app) as client:
+            result = client.post("/api/runs", headers=self.headers, json={
+                "lead": "gpt", "task": "Review the scores", "context": "Private",
+                "approved": True,
+            })
+            self.assertEqual(result.status_code, 201)
+            self.assertEqual(client.get("/api/runs/" + result.json()["id"], headers=guest).status_code, 404)
+            self.assertEqual(client.get("/api/runs", headers=guest).json()["runs"], [])
+
+    def test_github_issue_import_previews_source_without_contacting_models(self):
+        with TestClient(http_app(self.store, self.token, ["testserver"])) as client:
+            with patch("handoff.connectors.httpx.get", return_value=httpx.Response(200, json={
+                "title": "Check CSV", "body": "One row is missing.",
+            })) as get, patch.object(self.store.providers, "call") as call:
+                data = {"url": "https://github.com/example/repo/issues/1"}
+                self.assertEqual(client.post("/api/import-issue", json=data).status_code, 401)
+                result = client.post("/api/import-issue", headers=self.headers, json=data)
+                self.assertEqual(result.status_code, 200)
+                self.assertIn(data["url"], result.json()["context"])
+                self.assertIn("One row is missing.", result.json()["context"])
+                self.assertEqual(client.post("/api/import-issue", headers=self.headers,
+                                             json={"url": "http://localhost/issues/1"}).status_code, 400)
+                get.assert_called_once()
+                call.assert_not_called()
