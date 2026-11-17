@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: model-handoff-mcp
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /healthz
+    envVars:
+      - key: HANDOFF_HTTP_TOKEN
+        generateValue: true
+      - key: HANDOFF_GPT_BACKEND
+        value: groq
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.1-flash-lite
+      - key: GEMINI_API_KEY
+        sync: false

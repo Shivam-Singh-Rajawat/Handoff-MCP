@@ -1,0 +1,2349 @@
+{
+  "mode": "offline_scripted_fixture",
+  "runs_completed": 72,
+  "runs_expected": 72,
+  "metrics": [
+    {
+      "lead": "gpt",
+      "strategy": "single",
+      "tasks": 12,
+      "tasks_passed": 0,
+      "assertions_passed": 13,
+      "assertions_total": 36,
+      "mean_elapsed_ms": 37.2,
+      "estimated_cost_usd": null
+    },
+    {
+      "lead": "gpt",
+      "strategy": "same_model",
+      "tasks": 12,
+      "tasks_passed": 12,
+      "assertions_passed": 36,
+      "assertions_total": 36,
+      "mean_elapsed_ms": 43.2,
+      "estimated_cost_usd": null
+    },
+    {
+      "lead": "gpt",
+      "strategy": "handoff",
+      "tasks": 12,
+      "tasks_passed": 12,
+      "assertions_passed": 36,
+      "assertions_total": 36,
+      "mean_elapsed_ms": 49.1,
+      "estimated_cost_usd": null
+    },
+    {
+      "lead": "gemini",
+      "strategy": "single",
+      "tasks": 12,
+      "tasks_passed": 0,
+      "assertions_passed": 13,
+      "assertions_total": 36,
+      "mean_elapsed_ms": 44.8,
+      "estimated_cost_usd": null
+    },
+    {
+      "lead": "gemini",
+      "strategy": "same_model",
+      "tasks": 12,
+      "tasks_passed": 12,
+      "assertions_passed": 36,
+      "assertions_total": 36,
+      "mean_elapsed_ms": 46.0,
+      "estimated_cost_usd": null
+    },
+    {
+      "lead": "gemini",
+      "strategy": "handoff",
+      "tasks": 12,
+      "tasks_passed": 12,
+      "assertions_passed": 36,
+      "assertions_total": 36,
+      "mean_elapsed_ms": 44.3,
+      "estimated_cost_usd": null
+    }
+  ],
+  "runs": [
+    {
+      "task": "zero-is-data",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs if x]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zero-is-data",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "32100eb09ffc462e8af85d9b672fd93b",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 69,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs if x]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zero-is-data",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "93fd9e46132a46068934b24fbb9af8a9",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 36,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs if x]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zero-is-data",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs if x]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zero-is-data",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "097ef02d047a405f95257f78c105868b",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs if x]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zero-is-data",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "1ad2a286b1364349a1b1668cf2556162",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs if x]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs if x is not None]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "stable-dedup",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(set(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "stable-dedup",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "dcecebee78994535be5dcad9472c27a5",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(set(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "stable-dedup",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "4af8f2f68cb941e5afab3c231f438016",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(set(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "stable-dedup",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(set(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "stable-dedup",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "64c9359db94c4184ae876a23f076729b",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 36,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(set(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "stable-dedup",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "eefd1c504c5a4601863d1de3e8bf3864",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(set(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return list(dict.fromkeys(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "count-categories",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return {x: 1 for x in xs}",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "count-categories",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "082476e4eb57424ba5a37a840e02c3f5",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return {x: 1 for x in xs}",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "count-categories",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "e3130abcfb96472cb7290e6233b7f883",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return {x: 1 for x in xs}",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "count-categories",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return {x: 1 for x in xs}",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "count-categories",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "a1c5f354a91646c2a0872e8cb5b496f2",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return {x: 1 for x in xs}",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "count-categories",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "5cff04b4036d4d3ca2e2428f359088a6",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 40,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return {x: 1 for x in xs}",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    counts = {}\n    for x in xs:\n        counts[x] = counts.get(x, 0) + 1\n    return counts",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "column-aliases",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 41,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x.lower() for x in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "column-aliases",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "aa87df15721543feaa92520a7a85bf03",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x.lower() for x in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "column-aliases",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "c8d2dc30d9d840f086f70c185b0e90b8",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x.lower() for x in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "column-aliases",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x.lower() for x in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "column-aliases",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "9dd0c7ff40d34bcd9c5e3a0e5660915a",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x.lower() for x in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "column-aliases",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "37af7d83131b486ebb8227c47ec95189",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x.lower() for x in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x.strip().lower() for x in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "coalesce",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 2,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [r.get('value') or r['fallback'] for r in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "coalesce",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "9ad6bfe82d744f88a424e3588209d81c",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [r.get('value') or r['fallback'] for r in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "coalesce",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "917217d5169f4cd79f140dbdfaeaf9fa",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [r.get('value') or r['fallback'] for r in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "coalesce",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 2,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 36,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [r.get('value') or r['fallback'] for r in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "coalesce",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "7eea9c1ce39f4b95acf1a9dae3faf564",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [r.get('value') or r['fallback'] for r in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "coalesce",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "1851ed59c0ac4a9ba69dcb711da841be",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [r.get('value') or r['fallback'] for r in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [r['fallback'] if r.get('value') is None else r['value'] for r in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "sort-dates",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(xs)",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "sort-dates",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "9fde75ad66fd44b3b9ad766551826110",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(xs)",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "sort-dates",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "30a6bfdf41bd45439c51d07963e56d5e",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(xs)",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "sort-dates",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 66,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(xs)",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "sort-dates",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "75d41121f9ec40dd8de2705f67d6cebd",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 66,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(xs)",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "sort-dates",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "3d4623439fce4f1faf2b7529e818ab5f",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 70,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return sorted(xs)",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from datetime import datetime\n    return sorted(xs, key=lambda x: datetime.strptime(x, '%m/%d/%Y'))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "running-total",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [sum(xs[:i]) for i in range(len(xs))]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "running-total",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "648f5580f55e4bb1bbb9e381ea134488",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [sum(xs[:i]) for i in range(len(xs))]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "running-total",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "38bb558aae994c8db5abc86bd9069a61",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [sum(xs[:i]) for i in range(len(xs))]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "running-total",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 65,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [sum(xs[:i]) for i in range(len(xs))]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "running-total",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "66a2df02b12a4a9ebf767c137fb685f8",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [sum(xs[:i]) for i in range(len(xs))]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "running-total",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "9ffe0bdd1be546c085b4435948acf0e6",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 40,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [sum(xs[:i]) for i in range(len(xs))]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import accumulate\n    return list(accumulate(xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zip-columns",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return list(zip(*xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zip-columns",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "3a7edc47e3614ff0a739a4f08398dcd0",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return list(zip(*xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zip-columns",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "8917fa7ea4504112b4d1748ee205c921",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return list(zip(*xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zip-columns",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return list(zip(*xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zip-columns",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "5d3f66ba029b4c448634a70a5e982e55",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 70,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return list(zip(*xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "zip-columns",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "03e1d0e33bba40c99d77bd11375b4ddd",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return list(zip(*xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    from itertools import zip_longest\n    return list(zip_longest(*xs))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "percentage-change",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 38,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [(new-old)/new*100 for old,new in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "percentage-change",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "5ef53ba746704acf9d2506bd374c5f77",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [(new-old)/new*100 for old,new in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "percentage-change",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "b9fc39f504d14ca59cf30d381448a4e4",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 70,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [(new-old)/new*100 for old,new in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "percentage-change",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 66,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [(new-old)/new*100 for old,new in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "percentage-change",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "ae387054de7c423ca943b342bdfaabea",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 36,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [(new-old)/new*100 for old,new in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "percentage-change",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "fc3558363d2643daa086ca3a5d721928",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 71,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [(new-old)/new*100 for old,new in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [None if old == 0 else (new-old)/old*100 for old,new in xs]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "inclusive-range",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] < x < xs[2]]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "inclusive-range",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "b5bea9e99d6d4b2ea2e7fab04321fc03",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 38,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] < x < xs[2]]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "inclusive-range",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "0910cbc16d804bd0a72c0e0daccf2558",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 45,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] < x < xs[2]]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "inclusive-range",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] < x < xs[2]]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "inclusive-range",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "fb1049c87e3f4dc7a6457f3feae7b569",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 37,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] < x < xs[2]]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "inclusive-range",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "2ece862aadb94a7388dc15ab324d988d",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 35,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] < x < xs[2]]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return [x for x in xs[0] if xs[1] <= x <= xs[2]]",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "last-record",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs):\n    latest = {}\n    for key, value in xs:\n        latest.setdefault(key, value)\n    return latest",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "last-record",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "15ea5acd2f9e49a399648195eb125a1f",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs):\n    latest = {}\n    for key, value in xs:\n        latest.setdefault(key, value)\n    return latest",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return dict(xs)",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return dict(xs)",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "last-record",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "526b2339ff2147dda6040e0fdc85f80f",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 66,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs):\n    latest = {}\n    for key, value in xs:\n        latest.setdefault(key, value)\n    return latest",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return dict(xs)",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return dict(xs)",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "last-record",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs):\n    latest = {}\n    for key, value in xs:\n        latest.setdefault(key, value)\n    return latest",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "last-record",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "70d704760914407aa067a82c19e10d0a",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs):\n    latest = {}\n    for key, value in xs:\n        latest.setdefault(key, value)\n    return latest",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return dict(xs)",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return dict(xs)",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "last-record",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "5495597008324301a2e0a51fc90d2694",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 34,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs):\n    latest = {}\n    for key, value in xs:\n        latest.setdefault(key, value)\n    return latest",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs): return dict(xs)",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs): return dict(xs)",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "complete-csv-fields",
+      "lead": "gpt",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return xs.split(',')",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "complete-csv-fields",
+      "lead": "gpt",
+      "strategy": "same_model",
+      "handoff_id": "9a4d998f1a1f4a068d75c6f0df391fc7",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return xs.split(',')",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "complete-csv-fields",
+      "lead": "gpt",
+      "strategy": "handoff",
+      "handoff_id": "bf190b20cc8d441d84ea044126fd60f6",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 66,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return xs.split(',')",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "complete-csv-fields",
+      "lead": "gemini",
+      "strategy": "single",
+      "handoff_id": null,
+      "passed": 1,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 33,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return xs.split(',')",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "complete-csv-fields",
+      "lead": "gemini",
+      "strategy": "same_model",
+      "handoff_id": "e093e907e320476d838752b7cc989ecb",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 67,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return xs.split(',')",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    },
+    {
+      "task": "complete-csv-fields",
+      "lead": "gemini",
+      "strategy": "handoff",
+      "handoff_id": "4a64e7ec2ec24dc791f0148f560eb8f6",
+      "passed": 3,
+      "total": 3,
+      "status": "scored",
+      "elapsed_ms": 37,
+      "estimated_cost_usd": null,
+      "calls": [
+        {
+          "text": "def transform(xs): return xs.split(',')",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "Scripted review fixture. Reference implementation:\ndef transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gpt",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        },
+        {
+          "text": "def transform(xs):\n    import csv\n    return next(csv.reader([xs]))",
+          "model": "fixture-gemini",
+          "latency_ms": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "estimated_cost_usd": null
+        }
+      ]
+    }
+  ]
+}

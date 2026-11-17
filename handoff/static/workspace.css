@@ -1,0 +1,42 @@
+:root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; background: #10151e; color: #eef3fb; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; }
+header { display: flex; align-items: center; gap: 1rem; padding: 1rem max(1.25rem, calc((100% - 1120px)/2)); border-bottom: 1px solid #344052; }
+header a { color: inherit; font-weight: 750; text-decoration: none; white-space: nowrap; }
+header span { margin-left: auto; color: #b8c9df; }
+main { padding: 2rem 1.25rem 3rem; max-width: 1160px; margin: auto; }
+#workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; align-items: start; }
+.panel { min-width: 0; padding: clamp(1rem, 3vw, 1.8rem); background: #192231; border: 1px solid #344052; border-radius: 14px; }
+#unlock { max-width: 470px; margin: 5vh auto 0; }
+h1, h2 { margin: 0 0 1.2rem; }
+h1 { font-size: 1.6rem; }
+h2 { font-size: 1.2rem; }
+label { display: block; margin: .95rem 0 .35rem; font-weight: 650; }
+textarea, input, select, button { font: inherit; }
+textarea, input[type=password], input[type=file], select { width: 100%; padding: .7rem; color: inherit; background: #10151e; border: 1px solid #55657c; border-radius: 8px; }
+textarea { resize: vertical; }
+input::placeholder, textarea::placeholder { color: #a3b1c5; }
+button { background: #9ce6c3; border: 0; color: #11251d; border-radius: 8px; font-weight: 750; padding: .65rem 1rem; cursor: pointer; }
+button:disabled { opacity: .65; cursor: wait; }
+form > button { margin-top: .9rem; }
+:focus-visible { outline: 3px solid #9ce6c3; outline-offset: 3px; }
+small { display: block; margin-top: .35rem; color: #bbc8d9; }
+.sequence { color: #9ce6c3; font-size: .9rem; margin: .55rem 0; }
+.check { display: flex; align-items: baseline; gap: .45rem; font-size: .9rem; }
+.history { grid-column: 1 / -1; }
+ul { padding: 0; list-style: none; margin: 0; }
+li + li { margin-top: .55rem; }
+li button { text-align: left; background: #29374a; color: #eef3fb; max-width: 100%; overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+details, .final { border-top: 1px solid #344052; padding: .7rem 0; }
+summary { cursor: pointer; font-weight: 650; }
+#status { color: #ffd192; }
+@media (max-width: 740px) { #workspace { grid-template-columns: 1fr; } main { padding-top: 1rem; } }
+.demo { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(1rem, 5vw, 4rem); }
+.demo h1 { font-size: clamp(2rem, 5vw, 3.75rem); letter-spacing: -.055em; line-height: 1.03; }
+.demo-intro > p { line-height: 1.6; }
+#demo-steps { min-width: 0; }
+#demo-steps > :first-child { border-top: 0; }
+#details > button { margin-bottom: .9rem; }
+@media (max-width: 740px) { .demo { grid-template-columns: 1fr; } }

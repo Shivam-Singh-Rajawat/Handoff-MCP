@@ -1,0 +1,7 @@
+*
+!pyproject.toml
+!handoff/
+!handoff/*.py
+!handoff/static/
+!handoff/static/*
+handoff/__pycache__
