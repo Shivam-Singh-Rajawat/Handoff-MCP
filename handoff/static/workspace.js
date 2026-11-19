@@ -177,7 +177,10 @@ byId("unlock").onsubmit = (event) => {
     byId("lead").focus();
   }, "Opening workspace…");
 };
-byId("lock").onclick = () => location.reload();
+byId("lock").onclick = () => act(async () => {
+  await fetch("/auth/logout", { method: "POST" });
+  location.reload();
+});
 
 function updateSequence() {
   const lead = byId("lead").value;
@@ -242,3 +245,23 @@ byId("run").onsubmit = (event) => {
     byId("file").disabled = false;
   });
 };
+
+async function restoreLogin() {
+  try {
+    const config = await fetch("/api/auth-config", {cache: "no-store"}).then(response => response.json());
+    byId("google-login").hidden = !config.google;
+    if (config.google) {
+      const response = await fetch("/api/runs", {cache: "no-store"});
+      if (response.ok) {
+        await history();
+        byId("unlock").hidden = true;
+        byId("public-demo").hidden = true;
+        byId("workspace").hidden = false;
+        byId("lock").hidden = false;
+      }
+    }
+  } catch (error) {
+    // Token-based access remains available if automatic session restoration fails.
+  }
+}
+restoreLogin();

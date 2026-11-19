@@ -1,9 +1,12 @@
 """Consistent SQLite snapshots for the owner and invited workspaces."""
 from pathlib import Path
 import sqlite3
+import os
 
 
 def backup_tree(database: Path, destination: Path):
+    if os.getenv("DATABASE_URL"):
+        raise ValueError("PostgreSQL storage is active. Use pg_dump or your database provider backups.")
     root = database.parent.resolve()
     destination = destination.resolve()
     if destination == root or root in destination.parents:

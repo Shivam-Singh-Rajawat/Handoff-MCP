@@ -38,8 +38,8 @@ Offline mode returns labeled fixtures. For two-way live calls, configure both
 providers as described below and remove `--offline`. Keep the server single-process
 and use the same private token for the web workspace and the MCP client. Anyone
 holding the token has access to all saved runs on that instance. Do not share it
-with visitors. This MVP is a single-operator workspace and does not implement
-Google sign-in or multi-user project isolation.
+with visitors. Invite tokens and configured Google identities select isolated or explicitly shared workspaces.
+See the 0.3 deployment section for persistent PostgreSQL storage and Google login.
 
 The web request waits for up to three provider calls. On a reported provider
 failure, restart the remaining steps from **Run details**. If the server process
@@ -112,7 +112,7 @@ handoff benchmark --output evidence/live-benchmark.json --confirm
 
 ## Deploy the MCP server
 
-The Docker image runs a single-tenant HTTP server with a persistent SQLite database and a shared bearer token. For a hosted instance, terminate HTTPS at your reverse proxy, pass the expected Host header, and keep the backend port private. Any client with the token can read handoffs and incur provider charges. Use one instance and token per trusted workspace. Google sign-in and multi-user isolation can be added when a hosted multi-user workspace is required.
+The Docker image runs a single-tenant HTTP server with a persistent SQLite database and a shared bearer token. For a hosted instance, terminate HTTPS at your reverse proxy, pass the expected Host header, and keep the backend port private. Any client with the token can read handoffs and incur provider charges. Use one instance and token per trusted workspace. Configure native OAuth and invited Google identities as described in the 0.3 deployment section.
 
 ```bash
 docker build -t model-handoff .
@@ -189,7 +189,7 @@ token with `python -c "import secrets; print(secrets.token_urlsafe(32))"`. Give
 each person only their own token. Browser history and remote MCP handoffs are
 isolated in separate SQLite databases. Keep the account name when rotating its
 token to keep its history. Remove the entry to revoke access on the next restart.
-Google sign-in and generic remote MCP OAuth remain future work.
+Native MCP OAuth and Google login are available with the 0.3 configuration below.
 
 To import context, paste a public GitHub issue URL and select **Load issue into
 context**. The app fetches the issue title and body with a read-only GitHub
@@ -372,3 +372,101 @@ Container execution remains unverified because Docker is unavailable.
 Release verification completed with 19 passing automated tests and 72 scored
 offline benchmark trials. Offline results test orchestration and scoring, and
 provide no evidence of live model quality.
+
+## 0.3 deployment: persistent storage and native OAuth
+
+Set `DATABASE_URL` to a pooled PostgreSQL connection URL in Render's secret
+environment settings. Use TLS. All workspace history, projects, artifacts,
+provider budgets, queues, OAuth clients and grants then live in PostgreSQL.
+Separate database schemas isolate independent workspaces. Render can sleep or
+redeploy while that external database retains the records. Without DATABASE_URL,
+the previous SQLite behavior remains available for local use.
+
+The database role must be permitted to create workspace schemas. Connections use
+a small client pool. Keep one configured Render service instance. A database
+worker lease prevents old and new deployment containers from consuming the same
+queue concurrently. Interrupted provider calls require explicit retry.
+
+To import an existing SQLite workspace, stop new writes, retain a copy, and run:
+
+```bash
+handoff --db /path/to/history.sqlite migrate-sqlite --workspace owner
+```
+
+The destination comes from DATABASE_URL. The import preserves IDs and skips
+conflicting records. Import independent workspace databases separately using
+their configured names. A local SQLite file must still exist to be imported.
+For PostgreSQL backups, use pg_dump and the database provider's backup/restore
+facilities. The SQLite backup command rejects PostgreSQL mode.
+
+### Native MCP authorization
+
+Set these non-secret environment variables:
+
+```text
+HANDOFF_NATIVE_OAUTH=true
+HANDOFF_PUBLIC_URL=https://model-handoff-mcp.onrender.com
+```
+
+The server provides authorization-server discovery, protected-resource metadata,
+dynamic client registration, explicit consent, PKCE S256, expiring access
+tokens, rotating refresh tokens, and revocation. Native clients use this URL:
+
+```text
+https://model-handoff-mcp.onrender.com/mcp
+```
+
+Select OAuth and automatic client registration. Request `handoff offline_access`.
+Users can authorize access with their existing workspace token on the consent
+page. A separate Auth0 account is optional. The previously supported external
+OAuth token-verification configuration remains an alternative.
+
+Claude users should choose **Register automatically** for the OAuth client.
+Configure the actual remote connector in the intended user's Claude account.
+Codex and Gemini CLI can also connect using the remote MCP URL and an authorized
+bearer token where their client supports fixed headers.
+
+Native application availability is controlled by the application provider.
+At verification time, Google's official Gemini web documentation requires a US
+personal account. OpenAI's custom-MCP help page lists Business and
+Enterprise/Edu availability. Check the actual account's controls. These account
+requirements do not change Gemini API access through this workspace.
+
+Official client guidance:
+- https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt
+- https://support.google.com/gemini/answer/17209137
+- https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp
+
+### Google sign-in
+
+Create a **Web application** OAuth client in the Google Cloud project you
+control. Configure its authorized redirect URI exactly as:
+
+```text
+https://model-handoff-mcp.onrender.com/auth/google/callback
+```
+
+Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in Render, and configure an
+explicit invitation map in `HANDOFF_GOOGLE_WORKSPACES`:
+
+```json
+{"your-email@example.com":"owner"}
+```
+
+Map collaborators to an existing independent workspace name to share it.
+Users outside this map are denied. While Google's OAuth app is in testing,
+include each intended account in its test-user list.
+
+Once configured, the browser shows **Continue with Google**. Google login also
+works inside native MCP consent. Google proves identity, and a separate explicit
+consent action grants a client workspace access. Web sessions use Secure,
+HttpOnly cookies. Cookie-authenticated writes require the same origin.
+Application access logging is disabled so OAuth callback query credentials
+are excluded from application access logs. The app never receives the user's
+Google password.
+
+Tests cover registration, consent CSRF checks, PKCE mismatch, one-use codes,
+refresh rotation, grant revocation, Google nonce and audience validation,
+verified email and invitation checks, and overlapping worker leases. The real
+Google OAuth client credentials and each native application account still
+require live setup and end-to-end verification.

@@ -10,9 +10,10 @@ import uvicorn
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 from starlette.applications import Starlette
-from starlette.responses import PlainTextResponse
+from starlette.responses import PlainTextResponse, JSONResponse, RedirectResponse
 
 from .auth import OAuth
+from .native_auth import NativeAuth
 from .jobs import Jobs
 from .projects import Projects
 from .providers import Model
@@ -156,13 +157,19 @@ def http_app(handoffs: Handoffs, token: str, hosts: list[str],
     for name, secret in tokens.items():
         if name != "owner" and name not in aliases:
             store = Handoffs(handoffs.path.parent / "accounts" / name / "history.sqlite",
-                             handoffs.providers.providers)
+                             handoffs.providers.providers, workspace=name)
             apps[name] = workspace_app(store)
             workspaces.append((f"Bearer {secret}".encode(), apps[name]))
     for name, workspace in aliases.items():
         if workspace not in apps:
             raise ValueError("Shared workspace must reference owner or an independent account.")
         workspaces.append((f"Bearer {tokens[name]}".encode(), apps[workspace]))
+    native = None
+    native_app = None
+    if os.getenv("HANDOFF_NATIVE_OAUTH", "false").lower() == "true":
+        grants = [(secret, aliases.get(name, name)) for name, secret in tokens.items()]
+        native = NativeAuth(handoffs, grants, set(apps))
+        native_app = Starlette(routes=native.routes())
     public_assets = {"/", "/workspace.css", "/workspace.js", "/healthz", "/readyz"}
 
     @asynccontextmanager
@@ -183,6 +190,29 @@ def http_app(handoffs: Handoffs, token: str, hosts: list[str],
     async def authenticate(scope, receive, send):
         if scope["type"] == "lifespan":
             return await lifecycle(scope, receive, send)
+        path = scope.get("path", "")
+        if scope["type"] == "http" and path == "/api/auth-config":
+            return await JSONResponse({"google": bool(native and native.google_client and native.google_secret),
+                                       "native_oauth": bool(native)})(scope, receive, send)
+        if scope["type"] == "http" and native and path in {
+            "/.well-known/oauth-protected-resource", "/.well-known/oauth-protected-resource/mcp"
+        }:
+            return await native.metadata()(scope, receive, send)
+        if scope["type"] == "http" and native and path == "/auth/logout":
+            headers = dict(scope["headers"])
+            if scope["method"] != "POST" or headers.get(b"origin", b"").decode() != native.origin:
+                return await PlainTextResponse("Forbidden", status_code=403)(scope, receive, send)
+            from starlette.requests import Request
+            request = Request(scope)
+            session = request.cookies.get("mh_session", "")
+            native.get("session", session, consume=True)
+            response = JSONResponse({"status": "logged_out"})
+            response.delete_cookie("mh_session", secure=True, httponly=True, samesite="lax")
+            return await response(scope, receive, send)
+        if scope["type"] == "http" and native and path in {
+            route.path for route in native_app.routes
+        }:
+            return await native_app(scope, receive, send)
         if scope["type"] == "http" and oauth.keys and scope["path"] in {
             "/.well-known/oauth-protected-resource", "/.well-known/oauth-protected-resource/mcp"
         }:
@@ -194,12 +224,25 @@ def http_app(handoffs: Handoffs, token: str, hosts: list[str],
             for authorization, workspace in workspaces:
                 if hmac.compare_digest(supplied, authorization):
                     app = workspace
+            if app is None and native:
+                workspace_name = await native.authenticate(supplied)
+                app = apps.get(workspace_name)
+                if app is None and path.startswith("/api/"):
+                    from starlette.requests import Request
+                    request = Request(scope)
+                    session = native.get("session", request.cookies.get("mh_session", ""))
+                    if session:
+                        if scope["method"] not in {"GET", "HEAD"} and dict(scope["headers"]).get(b"origin", b"").decode() != native.origin:
+                            return await PlainTextResponse("Forbidden", status_code=403)(scope, receive, send)
+                        app = apps.get(session["workspace"])
             if app is None:
                 workspace_name = await oauth.authenticate(supplied)
                 app = apps.get(workspace_name)
             if app is None:
                 challenge = "Bearer"
-                if oauth.keys:
+                if native:
+                    challenge += f' resource_metadata="{native.origin}/.well-known/oauth-protected-resource/mcp"'
+                elif oauth.keys:
                     challenge += f' resource_metadata="{oauth.resource.removesuffix("/mcp")}/.well-known/oauth-protected-resource/mcp"'
                 await PlainTextResponse("Unauthorized", status_code=401,
                                         headers={"WWW-Authenticate": challenge})(scope, receive, send)
@@ -226,4 +269,4 @@ def serve_http(handoffs: Handoffs, host: str, port: int):
     except json.JSONDecodeError:
         raise ValueError("HANDOFF_ACCOUNTS must be valid JSON.") from None
     app = http_app(handoffs, token, [entry.strip() for entry in hosts if entry.strip()], accounts)
-    uvicorn.run(app, host=host, port=port)
+    uvicorn.run(app, host=host, port=port, access_log=False)

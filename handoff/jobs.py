@@ -4,6 +4,8 @@ import json
 import logging
 import os
 import threading
+import time
+from uuid import uuid4
 
 from .workspace import Workspace
 
@@ -16,7 +18,12 @@ class Jobs:
         self.workspace = Workspace(handoffs)
         self.stop_event = threading.Event()
         self.thread = None
+        self.heartbeat = None
+        self.owner = uuid4().hex
+        self.leader = False
         with handoffs.connection() as db:
+            db.execute("""CREATE TABLE IF NOT EXISTS worker_lease (
+                key TEXT PRIMARY KEY, owner TEXT NOT NULL, expires DOUBLE PRECISION NOT NULL)""")
             db.execute("""CREATE TABLE IF NOT EXISTS job (
                 id TEXT PRIMARY KEY, request_key TEXT UNIQUE, day TEXT NOT NULL,
                 status TEXT NOT NULL, reserved_tokens INTEGER NOT NULL)""")
@@ -58,8 +65,8 @@ class Jobs:
                        offline=self.handoffs.providers.offline)
             if previous:
                 run.update(steps=previous["steps"], previous_id=previous["id"])
-            db.execute("INSERT INTO workspace_run VALUES (?, ?, ?)", (run["id"], "queued", json.dumps(run)))
-            db.execute("INSERT INTO job VALUES (?, ?, ?, 'queued', ?)", (run["id"], request_key, day, reserved))
+            db.execute("INSERT INTO workspace_run (id,status,data) VALUES (?, ?, ?)", (run["id"], "queued", json.dumps(run)))
+            db.execute("INSERT INTO job (id,request_key,day,status,reserved_tokens) VALUES (?, ?, ?, 'queued', ?)", (run["id"], request_key, day, reserved))
         return run
 
     def retry(self, run_id):
@@ -70,9 +77,33 @@ class Jobs:
         return self.submit(run["lead"], run["task"], run["context"],
                            run.get("mode", "cross"), run["helper"], previous=run)
 
-    def start(self):
-        # One application process per database. Interrupted calls require an explicit retry
-        # because an upstream call may have completed and been charged.
+    def acquire(self):
+        with self.handoffs.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT owner,expires FROM worker_lease WHERE key='queue'").fetchone()
+            if row and row["owner"] != self.owner and row["expires"] > time.time():
+                return False
+            db.execute("""INSERT INTO worker_lease (key,owner,expires) VALUES ('queue',?,?)
+                ON CONFLICT(key) DO UPDATE SET owner=excluded.owner,expires=excluded.expires""",
+                       (self.owner, time.time() + 60))
+        return True
+
+    def renew(self):
+        while not self.stop_event.wait(10):
+            if not self.leader:
+                continue
+            try:
+                with self.handoffs.connection() as db:
+                    changed = db.execute("UPDATE worker_lease SET expires=? WHERE key='queue' AND owner=?",
+                                         (time.time() + 60, self.owner)).rowcount
+                    self.leader = bool(changed)
+            except Exception:
+                self.leader = False
+                log.error("Worker lease renewal failed")
+
+    def recover(self):
+        # Only the current lease owner can classify abandoned work.
+
         with self.handoffs.connection() as db:
             rows = db.execute("SELECT data FROM workspace_run WHERE status='running'").fetchall()
             for row in rows:
@@ -80,6 +111,12 @@ class Jobs:
                 run.update(status="failed", error="interrupted")
                 db.execute("UPDATE workspace_run SET status='failed',data=? WHERE id=?", (json.dumps(run), run["id"]))
             db.execute("UPDATE job SET status='failed' WHERE status='running'")
+    def start(self):
+        self.leader = self.acquire()
+        if self.leader:
+            self.recover()
+        self.heartbeat = threading.Thread(target=self.renew, daemon=True, name="handoff-heartbeat")
+        self.heartbeat.start()
         self.thread = threading.Thread(target=self.work, daemon=True, name="handoff-worker")
         self.thread.start()
 
@@ -99,7 +136,7 @@ class Jobs:
         run["status"] = "running"
         self.workspace.save(run)
         try:
-            run = self.workspace.execute(run)
+            run = self.workspace.execute(run, guard=(lambda: self.leader and not self.stop_event.is_set()) if threading.current_thread() is self.thread else None)
         except Exception:
             log.exception("Job failed id=%s", run["id"])
             run.update(status="failed", error="internal_error")
@@ -109,10 +146,18 @@ class Jobs:
         return True
 
     def work(self):
-        while not self.stop_event.is_set():
-            try:
-                if self.once():
-                    continue
-            except Exception:
-                log.exception("Queue worker failure")
-            self.stop_event.wait(0.5)
+        try:
+            while not self.stop_event.is_set():
+                try:
+                    if not self.leader:
+                        self.leader = self.acquire()
+                        if self.leader:
+                            self.recover()
+                    if self.leader and self.once():
+                        continue
+                except Exception:
+                    log.exception("Queue worker failure")
+                self.stop_event.wait(2 if self.handoffs.database.url else 0.5)
+        finally:
+            with self.handoffs.connection() as db:
+                db.execute("UPDATE worker_lease SET expires=0 WHERE key='queue' AND owner=?", (self.owner,))

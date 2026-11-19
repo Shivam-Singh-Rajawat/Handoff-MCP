@@ -1,21 +1,20 @@
 """Persistent single-tenant handoff history."""
-from contextlib import contextmanager
 from dataclasses import asdict
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-import sqlite3
 from uuid import uuid4
 
+from .database import Database
 from .limits import LimitedProviders
 from .providers import Model, ProviderError, Providers, helper_prompt
 
 
 class Handoffs:
-    def __init__(self, path: Path, providers: Providers):
-        path.parent.mkdir(parents=True, exist_ok=True)
+    def __init__(self, path: Path, providers: Providers, workspace="owner"):
+        self.database = Database(path, workspace)
         self.path = path
-        self.providers = providers if isinstance(providers, LimitedProviders) else LimitedProviders(path, providers)
+        self.providers = providers if isinstance(providers, LimitedProviders) else LimitedProviders(self.database, providers)
         with self.connection() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS handoff (
                 id TEXT PRIMARY KEY, previous_id TEXT, target TEXT NOT NULL,
@@ -23,15 +22,8 @@ class Handoffs:
                 status TEXT NOT NULL, response TEXT, error TEXT
             )""")
 
-    @contextmanager
     def connection(self):
-        db = sqlite3.connect(self.path, timeout=20)
-        db.row_factory = sqlite3.Row
-        try:
-            with db:
-                yield db
-        finally:
-            db.close()
+        return self.database.connection()
 
     def get(self, handoff_id: str) -> dict:
         with self.connection() as db:
@@ -48,7 +40,7 @@ class Handoffs:
             raise ValueError("Provide a task up to 4,000 characters and context up to 48,000.")
         handoff_id = uuid4().hex
         with self.connection() as db:
-            db.execute("""INSERT INTO handoff VALUES (?, ?, ?, ?, ?, ?, 'running', NULL, NULL)""",
+            db.execute("""INSERT INTO handoff (id,previous_id,target,task,context,created_at,status,response,error) VALUES (?, ?, ?, ?, ?, ?, 'running', NULL, NULL)""",
                        (handoff_id, previous_id, target, task, context, datetime.now(timezone.utc).isoformat()))
         try:
             reply = self.providers.call(target, helper_prompt(task, context), fixture)

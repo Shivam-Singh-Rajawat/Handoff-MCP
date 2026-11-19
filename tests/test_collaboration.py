@@ -120,3 +120,13 @@ class CollaborationTests(unittest.TestCase):
         self.assertEqual(retry["steps"]["draft"]["text"], "Already drafted")
         jobs.once()
         self.assertEqual(jobs.workspace.get(retry["id"])["status"], "completed")
+
+    def test_worker_lease_prevents_overlapping_deploy_workers(self):
+        first = Jobs(self.store)
+        second = Jobs(self.store)
+        self.assertTrue(first.acquire())
+        self.assertFalse(second.acquire())
+        with self.store.connection() as db:
+            db.execute("UPDATE worker_lease SET expires=0")
+        self.assertTrue(second.acquire())
+        self.assertFalse(first.acquire())

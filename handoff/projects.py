@@ -1,5 +1,4 @@
 """Workspace-scoped reusable project notes and text artifacts."""
-import json
 from uuid import uuid4
 
 
@@ -19,7 +18,7 @@ class Projects:
             raise ValueError("Project context limit is 24000 characters.")
         record = dict(id=uuid4().hex, title=title, context=context)
         with self.handoffs.connection() as db:
-            db.execute("INSERT INTO project VALUES (:id,:title,:context)", record)
+            db.execute("INSERT INTO project (id,title,context) VALUES (:id,:title,:context)", record)
         return record
 
     def list(self):
@@ -42,7 +41,7 @@ class Projects:
             raise ValueError("Text artifact limit is 100000 characters.")
         record = dict(id=uuid4().hex, project_id=project_id, name=name, content=content)
         with self.handoffs.connection() as db:
-            db.execute("INSERT INTO artifact VALUES (:id,:project_id,:name,:content)", record)
+            db.execute("INSERT INTO artifact (id,project_id,name,content) VALUES (:id,:project_id,:name,:content)", record)
         return record
 
     def artifact(self, artifact_id):
