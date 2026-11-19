@@ -249,3 +249,126 @@ direct OpenAI API, set `HANDOFF_GPT_BACKEND=openai` and use `OPENAI_API_KEY`
 and `OPENAI_MODEL` in place of the Groq settings. ChatGPT Plus and OpenAI API
 billing are separate. Groq cost estimates use optional
 `GROQ_INPUT_USD_PER_MILLION` and `GROQ_OUTPUT_USD_PER_MILLION`.
+
+## Collaboration release
+
+Select GPT, Gemini, or Claude as the lead and a helper in the web workspace.
+Claude requires `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`. Model IDs must be
+available in the corresponding provider account.
+
+Runs submitted through the web UI or the `create_run` MCP tool return immediately
+with a queued run ID. Poll `get_run` for progress and the final answer.
+`retry_run` creates a new, linked attempt using completed stages from the failed
+run. The browser polls automatically. Queued work resumes after restart.
+Interrupted provider calls are marked failed for explicit retry because the
+provider may already have charged for a response.
+
+A teammate can share an existing workspace using their own token. For example,
+configure the secret `HANDOFF_ACCOUNTS` as follows, replacing placeholders with
+distinct randomly generated tokens:
+
+```json
+{
+  "research": "<independent-workspace-token>",
+  "teammate": {"token": "<collaborator-token>", "workspace": "research"}
+}
+```
+
+The teammate sees the same projects, artifacts, runs, and budget as research.
+Every collaborator has full access within that workspace. Removing their token
+revokes access after restart. Independent workspaces remain isolated.
+The owner workspace is named `owner`.
+
+MCP clients can create and list projects, load saved context, save text artifacts,
+and retrieve artifacts. Reports, extracted document text, and code can be reused
+from another client using the same workspace. These project tools are available
+over stdio and HTTP. Binary file storage and project-management browser screens
+are pending.
+
+### Limits and operation
+
+Run one application process per data directory. The included `compose.yaml` runs
+one container with a named data volume and a readiness health check. Set secrets
+in your shell or an ignored `.env`, then use `docker compose up --build -d`.
+Configure HTTPS at your reverse proxy before exposing it externally.
+
+Run one application process per data directory. This release uses SQLite and a
+worker thread per independent workspace. Set the following environment values:
+
+| Variable | Default | Enforcement |
+| --- | --- | --- |
+| HANDOFF_DAILY_RUNS | 50 | New queued runs per workspace per UTC day |
+| HANDOFF_PENDING_RUNS | 10 | Queued and running jobs per workspace |
+| HANDOFF_DAILY_CALLS | 300 | All provider calls per workspace per UTC day |
+| HANDOFF_DAILY_OUTPUT_TOKENS | 1228800 | Conservative output-token reservations |
+| HANDOFF_MAX_OUTPUT_TOKENS | 4096 | Maximum generated tokens requested per call |
+| HANDOFF_TIMEOUT_SECONDS | 45 | Provider HTTP timeout |
+
+Each provider attempt reserves its entire output allowance even on failure.
+Input size is capped through task and context limits. Output reservations and
+call counts bound usage but do not provide a monetary billing cap.
+All calls, including legacy synchronous MCP tools, pass the provider limits.
+One provider call can execute at a time in each workspace. Prefer queued tools
+for collaboration. The legacy tools can report `workspace_busy` during a run.
+
+Use `/healthz` for liveness and `/readyz` to check database access and worker
+availability. Provider credentials are verified separately using
+`handoff check-providers --confirm`.
+
+Create a consistent backup outside the data directory:
+
+```bash
+handoff --db /data/history.sqlite backup --destination /backups/release-2026-11-19
+```
+
+This snapshots the main database and independent workspace databases and checks
+their SQLite integrity. Copy backups to durable storage and schedule the command
+through the hosting platform. To restore, stop the application, replace its
+database tree with the snapshot, retain the same account-to-workspace mapping,
+and restart. Backups contain private task context and artifacts.
+
+### OAuth for remote chat clients
+
+The server can validate access tokens from a separately configured OAuth service.
+That service handles login, consent, PKCE, client registration, and optionally
+Google sign-in. Configure:
+
+- `HANDOFF_PUBLIC_URL` — the external HTTPS origin.
+- `HANDOFF_OAUTH_ISSUER` — the exact authorization-server issuer.
+- `HANDOFF_OAUTH_JWKS_URL` — its HTTPS signing-key endpoint.
+- `HANDOFF_OAUTH_SUBJECTS` — a JSON mapping from authorized subject IDs to
+  configured workspace names, for example `{"user-id":"research"}`.
+
+Tokens must use RS256, have the exact issuer, include the `handoff` scope, and
+have an audience matching `HANDOFF_PUBLIC_URL + "/mcp"`.
+The server publishes protected-resource metadata and advertises it in its
+unauthorized response. Unlisted identities are denied. Configure the OAuth
+service to support the intended clients and issue access tokens for this resource.
+
+Codex and clients supporting bearer headers can use the workspace token directly.
+ChatGPT, Claude, and Gemini application availability and authorization support
+must be verified with the user's actual account. A successful protocol test
+does not establish that all native applications can connect. The external OAuth
+service and native Google sign-in have not been configured or verified live.
+
+### Verification record
+
+The collaboration upgrade has automated coverage for queued execution, duplicate
+submission, limits, restart handling, collaborator access, isolated accounts,
+artifact persistence, backup restoration, Claude request parsing, and OAuth
+token audience, scope, expiry, and subject checks. A separate HTTP process was
+started and exercised through a real localhost MCP request using offline
+providers.
+
+Live provider calls, hosted OAuth discovery/login, native chat applications,
+container execution, and hosted persistence still require deployment credentials
+and platform verification. Image analysis, Drive, and general external MCP
+connectors remain pending.
+
+Browser interaction verification was attempted in this environment. Chromium
+failed to launch because socket creation was denied. JavaScript syntax passed.
+Container execution remains unverified because Docker is unavailable.
+
+Release verification completed with 19 passing automated tests and 72 scored
+offline benchmark trials. Offline results test orchestration and scoring, and
+provide no evidence of live model quality.

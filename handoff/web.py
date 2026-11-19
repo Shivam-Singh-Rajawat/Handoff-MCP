@@ -39,7 +39,7 @@ async def payload(request):
     return value
 
 
-def workspace_routes(handoffs):
+def workspace_routes(handoffs, jobs=None):
     workspace = Workspace(handoffs)
 
     async def prepare(request):
@@ -83,6 +83,10 @@ def workspace_routes(handoffs):
             if not all(isinstance(item, str) for item in (lead, task, context)):
                 raise ValueError("Provide the lead, task, and context as text.")
             mode = data.get("mode", "cross")
+            if jobs:
+                run = await run_in_threadpool(jobs.submit, lead, task, context, mode,
+                                              data.get("helper"), data.get("request_key"))
+                return JSONResponse(run, status_code=202)
             return JSONResponse(await run_in_threadpool(workspace.create, lead, task, context, mode), status_code=201)
         except ValueError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
@@ -91,6 +95,16 @@ def workspace_routes(handoffs):
         run = await run_in_threadpool(workspace.get, request.path_params["run_id"])
         return JSONResponse(run or {"error": "Run not found."}, status_code=200 if run else 404)
 
+    async def ready(request):
+        try:
+            with handoffs.connection() as db:
+                db.execute("SELECT 1").fetchone()
+            if jobs is not None and (not jobs.thread or not jobs.thread.is_alive()):
+                return JSONResponse({"status": "worker_unavailable"}, status_code=503)
+            return JSONResponse({"status": "ready", "offline": handoffs.providers.offline})
+        except Exception:
+            return JSONResponse({"status": "storage_unavailable"}, status_code=503)
+
     async def health(request):
         return JSONResponse({"status": "ok"})
 
@@ -98,12 +112,14 @@ def workspace_routes(handoffs):
         try:
             if (await payload(request)).get("approved") is not True:
                 raise ValueError("Approve resending the saved context.")
-            return JSONResponse(await run_in_threadpool(workspace.retry, request.path_params["run_id"]))
+            return JSONResponse(await run_in_threadpool(jobs.retry if jobs else workspace.retry,
+                                                        request.path_params["run_id"]), status_code=202 if jobs else 200)
         except ValueError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
 
     return [
         Route("/healthz", health),
+        Route("/readyz", ready),
         Route("/", asset("index.html", "text/html")),
         Route("/workspace.css", asset("workspace.css", "text/css")),
         Route("/workspace.js", asset("workspace.js", "text/javascript")),

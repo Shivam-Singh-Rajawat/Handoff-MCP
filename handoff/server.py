@@ -12,12 +12,28 @@ from mcp.server.transport_security import TransportSecuritySettings
 from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse
 
+from .auth import OAuth
+from .jobs import Jobs
+from .projects import Projects
 from .providers import Model
 from .store import Handoffs
 from .web import workspace_routes
 
 
-def create_server(handoffs: Handoffs, hosts: list[str] | None = None) -> FastMCP:
+def create_server(handoffs: Handoffs, hosts: list[str] | None = None, jobs=None) -> FastMCP:
+    managed_jobs = jobs is None
+    jobs = jobs or Jobs(handoffs)
+
+    @asynccontextmanager
+    async def server_lifespan(_):
+        if managed_jobs:
+            jobs.start()
+        try:
+            yield {}
+        finally:
+            if managed_jobs:
+                jobs.close()
+
     security = None
     if hosts:
         security = TransportSecuritySettings(
@@ -26,7 +42,7 @@ def create_server(handoffs: Handoffs, hosts: list[str] | None = None) -> FastMCP
             allowed_origins=[f"https://{host}" for host in hosts],
         )
     mcp = FastMCP("model-handoff", json_response=True, stateless_http=True,
-                  transport_security=security)
+                  transport_security=security, lifespan=server_lifespan)
 
     @mcp.tool()
     def ask_model(target: Model, task: str, context: str, confirmed: bool = False) -> dict[str, Any]:
@@ -48,6 +64,56 @@ def create_server(handoffs: Handoffs, hosts: list[str] | None = None) -> FastMCP
             raise ValueError("Confirm with the user before retrying the handoff.")
         return handoffs.retry(handoff_id)
 
+    projects = Projects(handoffs)
+
+    @mcp.tool()
+    def create_project(title: str, context: str = "") -> dict[str, Any]:
+        """Save reusable project context in the authenticated workspace."""
+        return projects.create(title, context)
+
+    @mcp.tool()
+    def list_projects() -> list[dict[str, Any]]:
+        """List projects available to this workspace and its collaborators."""
+        return projects.list()
+
+    @mcp.tool()
+    def get_project(project_id: str) -> dict[str, Any]:
+        """Load project context and artifact IDs."""
+        return projects.get(project_id)
+
+    @mcp.tool()
+    def save_artifact(project_id: str, name: str, content: str) -> dict[str, Any]:
+        """Save a text report, code, or extracted document for collaborators to reuse."""
+        return projects.save(project_id, name, content)
+
+    @mcp.tool()
+    def get_artifact(artifact_id: str) -> dict[str, Any]:
+        """Read a saved text artifact by ID."""
+        return projects.artifact(artifact_id)
+
+    if jobs is not None:
+        @mcp.tool()
+        def create_run(lead: Model, task: str, context: str, helper: Model | None = None,
+                       mode: str = "cross", confirmed: bool = False,
+                       request_key: str | None = None) -> dict[str, Any]:
+            """Queue a durable collaboration run. Poll get_run for its result.
+            Set confirmed when the user has authorized sharing the supplied context."""
+            if not confirmed:
+                raise ValueError("Authorize sharing the selected context.")
+            return jobs.submit(lead, task, context, mode, helper, request_key)
+
+        @mcp.tool()
+        def retry_run(run_id: str, confirmed: bool = False) -> dict[str, Any]:
+            """Queue remaining steps of a failed run under a new budgeted attempt."""
+            if not confirmed:
+                raise ValueError("Authorize resending the saved context.")
+            return jobs.retry(run_id)
+
+        @mcp.tool()
+        def get_run(run_id: str) -> dict[str, Any]:
+            """Read a queued run, its provider replies, and final answer."""
+            return jobs.workspace.get(run_id) or {"error": "Run not found"}
+
     return mcp
 
 
@@ -58,7 +124,13 @@ def http_app(handoffs: Handoffs, token: str, hosts: list[str],
     if accounts is not None and not isinstance(accounts, dict):
         raise ValueError("HANDOFF_ACCOUNTS must be a JSON object.")
     tokens = {"owner": token}
+    aliases = {}
     for name, secret in (accounts or {}).items():
+        if isinstance(secret, dict):
+            if set(secret) != {"token", "workspace"}:
+                raise ValueError("Account needs token and workspace fields.")
+            aliases[name] = secret["workspace"]
+            secret = secret["token"]
         if not re.fullmatch(r"[a-z][a-z0-9_-]{0,31}", name) or name == "owner":
             raise ValueError("Invalid workspace account name.")
         tokens[name] = secret
@@ -68,32 +140,53 @@ def http_app(handoffs: Handoffs, token: str, hosts: list[str],
     if len(set(tokens.values())) != len(tokens):
         raise ValueError("Workspace tokens must be distinct.")
 
+    oauth = OAuth()
+    queues = []
+
     def workspace_app(store):
-        app = create_server(store, hosts).streamable_http_app()
-        app.router.routes.extend(workspace_routes(store))
+        jobs = Jobs(store)
+        queues.append(jobs)
+        app = create_server(store, hosts, jobs).streamable_http_app()
+        app.router.routes.extend(workspace_routes(store, jobs))
         return app
 
     owner = workspace_app(handoffs)
     workspaces = [(f"Bearer {token}".encode(), owner)]
+    apps = {"owner": owner}
     for name, secret in tokens.items():
-        if name != "owner":
+        if name != "owner" and name not in aliases:
             store = Handoffs(handoffs.path.parent / "accounts" / name / "history.sqlite",
-                             handoffs.providers)
-            workspaces.append((f"Bearer {secret}".encode(), workspace_app(store)))
-    public_assets = {"/", "/workspace.css", "/workspace.js", "/healthz"}
+                             handoffs.providers.providers)
+            apps[name] = workspace_app(store)
+            workspaces.append((f"Bearer {secret}".encode(), apps[name]))
+    for name, workspace in aliases.items():
+        if workspace not in apps:
+            raise ValueError("Shared workspace must reference owner or an independent account.")
+        workspaces.append((f"Bearer {tokens[name]}".encode(), apps[workspace]))
+    public_assets = {"/", "/workspace.css", "/workspace.js", "/healthz", "/readyz"}
 
     @asynccontextmanager
     async def lifespan(_):
         async with AsyncExitStack() as stack:
-            for _, app in workspaces:
+            for app in apps.values():
                 await stack.enter_async_context(app.router.lifespan_context(app))
-            yield
+            for queue in queues:
+                queue.start()
+            try:
+                yield
+            finally:
+                for queue in queues:
+                    queue.close()
 
     lifecycle = Starlette(lifespan=lifespan)
 
     async def authenticate(scope, receive, send):
         if scope["type"] == "lifespan":
             return await lifecycle(scope, receive, send)
+        if scope["type"] == "http" and oauth.keys and scope["path"] in {
+            "/.well-known/oauth-protected-resource", "/.well-known/oauth-protected-resource/mcp"
+        }:
+            return await oauth.metadata()(scope, receive, send)
         app = owner
         if scope["type"] == "http" and scope["path"] not in public_assets:
             supplied = dict(scope["headers"]).get(b"authorization", b"")
@@ -102,8 +195,14 @@ def http_app(handoffs: Handoffs, token: str, hosts: list[str],
                 if hmac.compare_digest(supplied, authorization):
                     app = workspace
             if app is None:
+                workspace_name = await oauth.authenticate(supplied)
+                app = apps.get(workspace_name)
+            if app is None:
+                challenge = "Bearer"
+                if oauth.keys:
+                    challenge += f' resource_metadata="{oauth.resource.removesuffix("/mcp")}/.well-known/oauth-protected-resource/mcp"'
                 await PlainTextResponse("Unauthorized", status_code=401,
-                                        headers={"WWW-Authenticate": "Bearer"})(scope, receive, send)
+                                        headers={"WWW-Authenticate": challenge})(scope, receive, send)
                 return
 
         async def protect_response(message):

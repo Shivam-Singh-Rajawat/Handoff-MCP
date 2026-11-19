@@ -1,0 +1,28 @@
+services:
+  handoff:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      HANDOFF_HTTP_TOKEN: ${HANDOFF_HTTP_TOKEN:?Set a generated workspace token}
+      HANDOFF_ACCOUNTS: ${HANDOFF_ACCOUNTS:-{}}
+      HANDOFF_HTTP_HOSTS: ${HANDOFF_HTTP_HOSTS:-localhost:8000,127.0.0.1:8000}
+      HANDOFF_GPT_BACKEND: ${HANDOFF_GPT_BACKEND:-openai}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODEL: ${GROQ_MODEL:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+    volumes:
+      - handoff-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=5)"]
+      interval: 30s
+      timeout: 6s
+      retries: 3
+volumes:
+  handoff-data:

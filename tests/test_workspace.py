@@ -1,4 +1,5 @@
 import base64
+import time
 from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -17,6 +18,14 @@ from handoff.workspace import Workspace
 
 
 class WorkspaceTests(unittest.TestCase):
+    def completed(self, client, run):
+        deadline = time.monotonic() + 5
+        while run["status"] in ("queued", "running") and time.monotonic() < deadline:
+            time.sleep(0.02)
+            run = client.get("/api/runs/" + run["id"], headers=self.headers).json()
+        self.assertEqual(run["status"], "completed")
+        return run
+
     def setUp(self):
         directory = TemporaryDirectory()
         self.addCleanup(directory.cleanup)
@@ -39,8 +48,8 @@ class WorkspaceTests(unittest.TestCase):
                 result = client.post("/api/runs", headers=self.headers, json={
                     "lead": lead, "task": "Review the scores", "context": context, "approved": True,
                 })
-                self.assertEqual(result.status_code, 201, result.text)
-                run = result.json()
+                self.assertEqual(result.status_code, 202, result.text)
+                run = self.completed(client, result.json())
                 self.assertEqual(run["status"], "completed")
                 self.assertEqual([run["steps"][stage]["model"] for stage in ("draft", "review", "final")],
                                  [f"fixture-{lead}", f"fixture-{helper}", f"fixture-{lead}"])
@@ -93,9 +102,9 @@ class WorkspaceTests(unittest.TestCase):
             request = {"lead": "gemini", "task": "Review the scores", "context": "Evidence", "approved": True}
             for mode, stages in (("single", ("final",)), ("same", ("draft", "review", "final"))):
                 response = client.post("/api/runs", headers=self.headers, json=request | {"mode": mode})
-                self.assertEqual(response.status_code, 201, response.text)
+                self.assertEqual(response.status_code, 202, response.text)
                 self.assertIn("no-store", response.headers["cache-control"])
-                run = response.json()
+                run = self.completed(client, response.json())
                 self.assertEqual(run["mode"], mode)
                 self.assertEqual(tuple(run["steps"]), stages)
                 self.assertTrue(all(step["model"] == "fixture-gemini" for step in run["steps"].values()))
@@ -110,7 +119,7 @@ class WorkspaceTests(unittest.TestCase):
                 "lead": "gpt", "task": "Review the scores", "context": "Private",
                 "approved": True,
             })
-            self.assertEqual(result.status_code, 201)
+            self.assertEqual(result.status_code, 202)
             self.assertEqual(client.get("/api/runs/" + result.json()["id"], headers=guest).status_code, 404)
             self.assertEqual(client.get("/api/runs", headers=guest).json()["runs"], [])
 

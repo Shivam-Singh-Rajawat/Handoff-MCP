@@ -83,19 +83,25 @@ class Workspace:
                 | {"mode": record.get("mode", "cross")}
                 for row in rows if (record := json.loads(row["data"]))]
 
-    def create(self, lead, task, context, mode="cross"):
+    def create(self, lead, task, context, mode="cross", helper=None, queued=False):
         if mode not in MODES:
             raise ValueError("Choose a supported review mode.")
-        if lead not in ("gpt", "gemini") or not 0 < len(task.strip()) <= 4000 or len(context) > MAX_CONTEXT:
+        if lead not in ("gpt", "gemini", "claude") or not 0 < len(task.strip()) <= 4000 or len(context) > MAX_CONTEXT:
             raise ValueError("Choose a model and enter a task up to 4,000 characters. Context limit is 24,000.")
         other = "gemini" if lead == "gpt" else "gpt"
-        helper = {"cross": other, "same": lead, "single": None}[mode]
+        if helper is not None and helper not in ("gpt", "gemini", "claude"):
+            raise ValueError("Choose a supported helper.")
+        helper = {"cross": helper or other, "same": lead, "single": None}[mode]
         run = {"id": uuid4().hex, "lead": lead, "helper": helper, "mode": mode,
                "task": task, "context": context, "status": "running", "steps": {}, "error": None,
                "offline": self.handoffs.providers.offline}
         with self.handoffs.connection() as db:
             db.execute("INSERT INTO workspace_run VALUES (?, ?, ?)",
                        (run["id"], "running", json.dumps(run)))
+        if queued:
+            run["status"] = "queued"
+            self.save(run)
+            return run
         return self.execute(run)
 
     def save(self, run):

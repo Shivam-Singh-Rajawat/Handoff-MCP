@@ -7,6 +7,7 @@ from pathlib import Path
 import sqlite3
 from uuid import uuid4
 
+from .limits import LimitedProviders
 from .providers import Model, ProviderError, Providers, helper_prompt
 
 
@@ -14,7 +15,7 @@ class Handoffs:
     def __init__(self, path: Path, providers: Providers):
         path.parent.mkdir(parents=True, exist_ok=True)
         self.path = path
-        self.providers = providers
+        self.providers = providers if isinstance(providers, LimitedProviders) else LimitedProviders(path, providers)
         with self.connection() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS handoff (
                 id TEXT PRIMARY KEY, previous_id TEXT, target TEXT NOT NULL,
@@ -24,7 +25,7 @@ class Handoffs:
 
     @contextmanager
     def connection(self):
-        db = sqlite3.connect(self.path)
+        db = sqlite3.connect(self.path, timeout=20)
         db.row_factory = sqlite3.Row
         try:
             with db:

@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "model-handoff"
-version = "0.1.0"
-description = "Two-way GPT and Gemini collaboration over MCP"
+version = "0.2.0"
+description = "Shared-project GPT, Gemini, and Claude collaboration over MCP"
 requires-python = ">=3.11"
-dependencies = ["mcp==1.29.0", "httpx==0.28.1", "pypdf==6.21.4"]
+dependencies = ["mcp==1.29.0", "httpx==0.28.1", "pypdf==6.21.4", "PyJWT[crypto]>=2.10,<3"]
 
 [project.scripts]
 handoff = "handoff.cli:main"

@@ -8,7 +8,7 @@ from typing import Literal
 
 import httpx
 
-Model = Literal["gpt", "gemini"]
+Model = Literal["gpt", "gemini", "claude"]
 
 
 class ProviderError(RuntimeError):
@@ -28,6 +28,8 @@ class Reply:
 
 
 def provider_prefix(provider: Model) -> str:
+    if provider == "claude":
+        return "ANTHROPIC"
     if provider == "gemini":
         return "GEMINI"
     backend = os.getenv("HANDOFF_GPT_BACKEND", "openai")
@@ -59,12 +61,19 @@ class Providers:
             raise ProviderError(f"missing_{prefix.lower()}_configuration")
 
         timeout = float(os.getenv("HANDOFF_TIMEOUT_SECONDS", "45"))
-        max_tokens = 4096
+        max_tokens = int(os.getenv("HANDOFF_MAX_OUTPUT_TOKENS", "4096"))
+        if not 1 <= max_tokens <= 16384:
+            raise ValueError("Output token limit must be between 1 and 16384.")
         if provider == "gpt":
             url = ("https://api.groq.com/openai/v1/responses" if prefix == "GROQ"
                    else "https://api.openai.com/v1/responses")
             headers = {"Authorization": f"Bearer {key}"}
             body = {"model": model, "input": prompt, "max_output_tokens": max_tokens, "store": False}
+        elif provider == "claude":
+            url = "https://api.anthropic.com/v1/messages"
+            headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
+            body = {"model": model, "max_tokens": max_tokens,
+                    "messages": [{"role": "user", "content": prompt}]}
         else:
             from urllib.parse import quote
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{quote(model, safe='')}:generateContent"
@@ -94,6 +103,13 @@ class Providers:
                 parts = [part["text"] for item in data.get("output", [])
                          if item.get("type") == "message"
                          for part in item.get("content", []) if part.get("type") == "output_text"]
+                usage = data.get("usage") or {}
+                input_tokens = usage.get("input_tokens")
+                output_tokens = usage.get("output_tokens")
+            elif provider == "claude":
+                if data.get("stop_reason") not in {"end_turn", "stop_sequence"}:
+                    raise ProviderError("incomplete_response")
+                parts = [part["text"] for part in data.get("content", []) if part.get("type") == "text"]
                 usage = data.get("usage") or {}
                 input_tokens = usage.get("input_tokens")
                 output_tokens = usage.get("output_tokens")

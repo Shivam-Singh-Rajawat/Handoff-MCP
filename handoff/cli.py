@@ -19,6 +19,9 @@ def main():
     parser.add_argument("--db", type=Path, default=Path(os.getenv("HANDOFF_DB", ".handoff/history.sqlite")))
     commands = parser.add_subparsers(dest="command", required=True)
 
+    backup = commands.add_parser("backup", help="Snapshot all workspace databases.")
+    backup.add_argument("--destination", type=Path, required=True)
+
     serve = commands.add_parser("serve")
     serve.add_argument("--transport", choices=["stdio", "http"], default="stdio")
     serve.add_argument("--host", default="127.0.0.1")
@@ -47,6 +50,10 @@ def main():
         command.add_argument("--confirm", action="store_true", help="Authorize sending supplied text to provider APIs.")
 
     args = parser.parse_args()
+    if args.command == "backup":
+        from .backup import backup_tree
+        print(json.dumps({"saved": backup_tree(args.db, args.destination)}, indent=2))
+        return 0
     if args.command in ("demo", "benchmark", "delegate", "retry") and not (args.offline or args.confirm):
         parser.error("Review the selected inputs and pass --confirm to send them to the providers.")
     if args.command == "check-providers":

@@ -34,7 +34,7 @@ class BridgeTests(unittest.TestCase):
                 async with ClientSession(reader, writer) as client:
                     await client.initialize()
                     tools = {tool.name for tool in (await client.list_tools()).tools}
-                    self.assertEqual(tools, {"ask_model", "get_handoff", "retry_handoff"})
+                    self.assertTrue({"ask_model", "get_handoff", "retry_handoff", "create_project", "get_artifact"} <= tools)
                     arguments = {"target": "gemini", "task": "Review", "context": "example"}
                     denied = await client.call_tool("ask_model", arguments)
                     self.assertTrue(denied.isError)
@@ -63,7 +63,7 @@ class BridgeTests(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()["result"]["serverInfo"]["name"], "model-handoff")
             tools = client.post("/mcp", headers=headers, json={"jsonrpc": "2.0", "id": 2, "method": "tools/list"})
-            self.assertEqual(len(tools.json()["result"]["tools"]), 3)
+            self.assertEqual(len(tools.json()["result"]["tools"]), 11)
             result = client.post("/mcp", headers=headers, json={
                 "jsonrpc": "2.0", "id": 3, "method": "tools/call",
                 "params": {"name": "ask_model", "arguments": {

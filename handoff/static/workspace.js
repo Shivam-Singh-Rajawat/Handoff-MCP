@@ -2,9 +2,10 @@
 
 const byId = (id) => document.getElementById(id);
 let token = "";
+let polling = null;
 const status = (message) => { byId("status").textContent = message; };
 let gptName = "GPT";
-const nameOf = (model) => model === "gpt" ? gptName : "Gemini";
+const nameOf = (model) => ({gpt: gptName, gemini: "Gemini", claude: "Claude"})[model];
 
 async function api(path, data) {
   const request = {
@@ -78,6 +79,13 @@ function exportRun(run) {
 }
 
 function showRun(run) {
+  clearTimeout(polling);
+  if (["queued", "running"].includes(run.status)) {
+    polling = setTimeout(() => act(async () => {
+      showRun(await api("runs/" + run.id));
+      await history();
+    }), 1500);
+  }
   const detail = byId("details");
   detail.replaceChildren();
   const task = document.createElement("p");
@@ -175,13 +183,14 @@ function updateSequence() {
   const lead = byId("lead").value;
   const mode = byId("review-mode").value;
   const name = nameOf(lead);
-  const reviewer = mode === "same" ? name : nameOf(lead === "gpt" ? "gemini" : "gpt");
+  const reviewer = mode === "same" ? name : nameOf(byId("helper").value);
   byId("sequence").textContent = mode === "single" ? name : [name, reviewer, name].join(" → ");
   byId("approval-text").textContent = "I approve sharing this task and context with " +
-    (mode === "cross" ? nameOf("gpt") + " and Gemini." : name + ".");
+    (mode === "cross" ? name + " and " + nameOf(byId("helper").value) + "." : name + ".");
   byId("approve").checked = false;
 }
 byId("lead").onchange = updateSequence;
+byId("helper").onchange = updateSequence;
 byId("review-mode").onchange = updateSequence;
 updateSequence();
 
@@ -222,7 +231,7 @@ byId("run").onsubmit = (event) => {
   byId("file").disabled = true;
   act(async () => {
     const result = await api("runs", {
-      lead: byId("lead").value, mode: byId("review-mode").value, task: byId("task").value,
+      lead: byId("lead").value, helper: byId("helper").value, request_key: crypto.randomUUID(), mode: byId("review-mode").value, task: byId("task").value,
       context: byId("context").value, approved: byId("approve").checked,
     });
     showRun(result);

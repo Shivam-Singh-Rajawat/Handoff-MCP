@@ -35,7 +35,7 @@
         <h1>New handoff</h1>
         <form id="run">
           <label for="lead">Lead model</label>
-          <select id="lead"><option value="gpt">GPT</option><option value="gemini">Gemini</option></select>
+          <select id="lead"><option value="gpt">GPT</option><option value="gemini">Gemini</option><option value="claude">Claude</option></select>
           <label for="review-mode">Review mode</label>
           <select id="review-mode">
             <option value="cross">Cross-model review</option>
@@ -45,6 +45,8 @@
           <p id="sequence" class="sequence"></p>
           <label for="task">Task</label>
           <textarea id="task" rows="3" maxlength="4000" required placeholder="Check these results and suggest a next step"></textarea>
+          <label for="helper">Helper model</label>
+          <select id="helper"><option value="gemini">Gemini</option><option value="gpt">GPT</option><option value="claude">Claude</option></select>
           <label for="file">Context file</label>
           <input id="file" type="file" accept=".pdf,.csv,.txt,.md">
           <small>PDF, CSV, TXT or Markdown · Up to 2 MiB</small>
