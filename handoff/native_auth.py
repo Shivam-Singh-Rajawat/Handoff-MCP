@@ -176,7 +176,7 @@ class NativeAuth:
         return HTMLResponse(
             '<!doctype html><html lang="en"><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            '<title>Model Handoff access</title><main><h1>Model Handoff</h1>' + body + '</main></html>',
+            '<title>Handoff-MCP access</title><main><h1>Handoff-MCP</h1>' + body + '</main></html>',
             status_code=status,
             # Preserve Origin on same-origin form POSTs. no-referrer can cause
             # browsers to serialize it as null, failing our strict CSRF check.

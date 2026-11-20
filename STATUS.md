@@ -1,4 +1,4 @@
-# Project status
+# Handoff-MCP project status
 
 Updated: 20 November 2026.
 
@@ -53,3 +53,18 @@ URL does not grant visitors permission to use the owner's API credentials.
 Automated checks are evidence of the tested behavior, not a guarantee of no bugs.
 
 Never commit API keys, database URLs, workspace tokens or OAuth client secrets.
+
+## Naming and compatibility
+
+The project is named **Handoff-MCP**. The Python distribution is `handoff-mcp`;
+the import package and existing `handoff` CLI stay compatible. The currently
+deployed hostname remains `model-handoff-mcp.onrender.com` to preserve Google
+redirect URIs, OAuth issuer/resource bindings and existing client configurations.
+Repository and connected-client display names must be renamed in their respective
+account settings when administrative access is available; this source rename
+does not rewrite previously registered third-party clients or historical records.
+
+Rename validation: the renamed package installs successfully. Seven native OAuth
+tests pass. A Windows/Python 3.14 full-suite comparison produced the same two
+backup cleanup errors and two evaluator failures before and after the rename;
+these existing platform failures are not counted as passing tests.

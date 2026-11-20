@@ -1,4 +1,4 @@
-# Model Handoff MCP
+# Handoff-MCP
 
 A Python MCP server and CLI that let GPT and Gemini delegate work to each other. The built-in demo fixes small Python data transformations and scores the final candidate against expected outputs.
 
@@ -87,13 +87,13 @@ On Windows PowerShell, activate with `.\.venv\Scripts\Activate.ps1`. Each demo p
 With the virtual environment active, register the local server:
 
 ```bash
-codex mcp add model-handoff -- "$(command -v handoff)" --offline --db "$PWD/.handoff/history.sqlite" serve
-codex mcp get model-handoff
+codex mcp add handoff-mcp -- "$(command -v handoff)" --offline --db "$PWD/.handoff/history.sqlite" serve
+codex mcp get handoff-mcp
 ```
 
 In PowerShell, use `(Get-Command handoff).Source` for the executable and an absolute database path. Open a fresh Codex session and ask:
 
-> Use the model-handoff MCP server to ask Gemini for edge cases for a Python function that drops None but keeps zero. I authorize sending that synthetic example. Then retrieve the handoff by ID and show its status.
+> Use the handoff-mcp MCP server to ask Gemini for edge cases for a Python function that drops None but keeps zero. I authorize sending that synthetic example. Then retrieve the handoff by ID and show its status.
 
 Offline mode returns a scripted answer and makes no provider calls. For a live local server, register the command without `--offline` and provide the model and API variables to the MCP subprocess. If your Codex configuration filters inherited environment variables, use its `env_vars` list or a local launcher that reads credentials from your secret store.
 
@@ -132,22 +132,22 @@ handoff benchmark --output evidence/live-benchmark.json --confirm
 The Docker image runs a single-tenant HTTP server with a persistent SQLite database and a shared bearer token. For a hosted instance, terminate HTTPS at your reverse proxy, pass the expected Host header, and keep the backend port private. Any client with the token can read handoffs and incur provider charges. Use one instance and token per trusted workspace. Configure native OAuth and invited Google identities as described in the 0.3 deployment section.
 
 ```bash
-docker build -t model-handoff .
-docker volume create model-handoff-data
+docker build -t handoff-mcp .
+docker volume create handoff-mcp-data
 
 export HANDOFF_HTTP_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
 export HANDOFF_HTTP_HOSTS="localhost:8000,127.0.0.1:8000"
 
 docker run --rm -p 127.0.0.1:8000:8000 \
-  --mount source=model-handoff-data,target=/data \
+  --mount source=handoff-mcp-data,target=/data \
   -e HANDOFF_HTTP_TOKEN -e HANDOFF_HTTP_HOSTS \
   -e OPENAI_API_KEY -e OPENAI_MODEL -e GEMINI_API_KEY -e GEMINI_MODEL \
   -e OPENAI_INPUT_USD_PER_MILLION -e OPENAI_OUTPUT_USD_PER_MILLION \
   -e GEMINI_INPUT_USD_PER_MILLION -e GEMINI_OUTPUT_USD_PER_MILLION \
-  model-handoff
+  handoff-mcp
 
 # In the Codex shell, export the same HANDOFF_HTTP_TOKEN before starting Codex.
-codex mcp add model-handoff-http --url http://127.0.0.1:8000/mcp \
+codex mcp add handoff-mcp-http --url http://127.0.0.1:8000/mcp \
   --bearer-token-env-var HANDOFF_HTTP_TOKEN
 ```
 
@@ -239,7 +239,7 @@ uploads, live runs, history, and the MCP endpoint.
    and register the MCP endpoint:
 
    ```bash
-   codex mcp add model-handoff --url https://YOUR-SERVICE.onrender.com/mcp \
+   codex mcp add handoff-mcp --url https://YOUR-SERVICE.onrender.com/mcp \
      --bearer-token-env-var HANDOFF_HTTP_TOKEN
    ```
 

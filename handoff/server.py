@@ -42,7 +42,7 @@ def create_server(handoffs: Handoffs, hosts: list[str] | None = None, jobs=None)
             allowed_hosts=hosts,
             allowed_origins=[f"https://{host}" for host in hosts],
         )
-    mcp = FastMCP("model-handoff", json_response=True, stateless_http=True,
+    mcp = FastMCP("Handoff-MCP", json_response=True, stateless_http=True,
                   transport_security=security, lifespan=server_lifespan)
 
     @mcp.tool()

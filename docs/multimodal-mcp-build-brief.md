@@ -4,7 +4,7 @@
 
 Build a private, deployable workspace where GPT and Gemini can each lead a project, ask the other for help, use authorized tools, and incorporate the returned text, data, or file into the final answer. A user can resume the same project with either model.
 
-Start from the attached **model-handoff.zip**. Inspect the code and run its tests before changing it. The prototype has a Python MCP server, a two-way CLI, SQLite history and retry, provider adapters, and a scripted 12-task benchmark. Preserve working behavior where practical. Treat its offline results as regression evidence. Verify live behavior separately.
+Start from the attached **Handoff-MCP source archive**. Inspect the code and run its tests before changing it. The prototype has a Python MCP server, a two-way CLI, SQLite history and retry, provider adapters, and a scripted 12-task benchmark. Preserve working behavior where practical. Treat its offline results as regression evidence. Verify live behavior separately.
 
 Deliver the implemented repository, Docker Compose configuration, environment template, migrations, automated tests, operating instructions, and verification results. The web workspace and remote MCP server are both deliverables. Package the software for deployment. Public hosting and publication require an explicit destination and authorization.
 

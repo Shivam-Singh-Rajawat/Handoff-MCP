@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: model-handoff-mcp
+    name: handoff-mcp
     runtime: docker
     plan: free
     region: oregon

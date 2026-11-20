@@ -61,7 +61,7 @@ class BridgeTests(unittest.TestCase):
             self.assertEqual(client.post("/mcp", json=request, headers=headers | {"Host": "invalid"}).status_code, 421)
             response = client.post("/mcp", json=request, headers=headers)
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json()["result"]["serverInfo"]["name"], "model-handoff")
+            self.assertEqual(response.json()["result"]["serverInfo"]["name"], "Handoff-MCP")
             tools = client.post("/mcp", headers=headers, json={"jsonrpc": "2.0", "id": 2, "method": "tools/list"})
             self.assertEqual(len(tools.json()["result"]["tools"]), 11)
             result = client.post("/mcp", headers=headers, json={
