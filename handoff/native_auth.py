@@ -178,7 +178,10 @@ class NativeAuth:
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
             '<title>Model Handoff access</title><main><h1>Model Handoff</h1>' + body + '</main></html>',
             status_code=status,
-            headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
+            # Preserve Origin on same-origin form POSTs. no-referrer can cause
+            # browsers to serialize it as null, failing our strict CSRF check.
+            # Cross-origin navigations still receive no callback URL or code.
+            headers={"Cache-Control": "no-store", "Referrer-Policy": "same-origin",
                      "Content-Security-Policy": "default-src 'none'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'"},
         )
 

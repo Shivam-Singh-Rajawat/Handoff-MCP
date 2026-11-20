@@ -110,6 +110,7 @@ class NativeAuthTests(unittest.TestCase):
         }}, 600)
         url = "/oauth/consent?transaction=" + transaction
         self.assertEqual(self.client.get(url).status_code, 200)
+        self.assertEqual(self.client.get(url).headers["referrer-policy"], "same-origin")
         self.assertEqual(self.client.post(url, data={"workspace_token": self.token},
                                          headers={"Origin": "https://other.example"}).status_code, 403)
         self.assertEqual(self.client.post(url, data={"workspace_token": self.token},
