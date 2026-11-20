@@ -309,25 +309,46 @@ class NativeAuth:
         if pending.get("web_login"):
             return self.finish(entry["transaction"], workspace)
         # Google proves identity. Explicit consent is still required before issuing an MCP grant.
-        approval = secrets.token_urlsafe(32)
+        approval, binder = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
         self.put("google_consent", approval, dict(transaction=entry["transaction"], workspace=workspace,
-                                                  binder=entry["binder"]), 300)
-        client = escape(pending["client_name"])
-        return self.page(
-            f"<h2>Connect {client}?</h2><p>Allow this client to read and write workspace context "
-            "and make billable model calls?</p>"
-            f'<form method="post" action="/oauth/google-consent"><input type="hidden" name="approval" '
-            f'value="{approval}"><button>Allow access</button></form>'
-        )
+                                                  binder=digest(binder)), 300)
+        # Leave the cross-site Google callback before rendering the POST form.
+        # A dedicated cookie also prevents another Google login tab from replacing
+        # the login binder while the user reviews this client's permissions.
+        response = RedirectResponse("/oauth/google-consent?" + urlencode({"approval": approval}), status_code=303)
+        response.set_cookie("mh_approval", binder, secure=True, httponly=True, samesite="lax", max_age=300)
+        return response
 
     async def google_consent(self, request):
+        if request.method == "GET":
+            approval = request.query_params.get("approval", "")
+            entry = self.get("google_consent", approval)
+            if not entry or not hmac.compare_digest(digest(request.cookies.get("mh_approval", "")), entry["binder"]):
+                return self.page("<p>Consent expired. Restart the connection from your client.</p>", 403)
+            pending = self.get("pending", entry["transaction"])
+            if not pending:
+                return self.page("<p>Authorization expired. Restart the connection from your client.</p>", 400)
+            client = escape(pending["client_name"])
+            return self.page(
+                f"<h2>Connect {client}?</h2><p>Allow this client to read and write workspace context "
+                "and make billable model calls?</p>"
+                f'<form method="post" action="/oauth/google-consent"><input type="hidden" name="approval" '
+                f'value="{escape(approval, quote=True)}"><button>Allow access</button></form>'
+            )
         if request.headers.get("origin") != self.origin:
             return self.page("<p>Request origin was rejected.</p>", 403)
         form = await request.form()
-        entry = self.get("google_consent", str(form.get("approval", "")), consume=True)
-        if not entry or not hmac.compare_digest(digest(request.cookies.get("mh_google", "")), entry["binder"]):
-            return self.page("<p>Consent expired. Start again.</p>", 403)
-        return self.finish(entry["transaction"], entry["workspace"])
+        approval = str(form.get("approval", ""))
+        entry = self.get("google_consent", approval)
+        if not entry or not hmac.compare_digest(digest(request.cookies.get("mh_approval", "")), entry["binder"]):
+            return self.page("<p>Consent expired. Restart the connection from your client.</p>", 403)
+        # Validate the cookie before consuming the one-use approval.
+        entry = self.get("google_consent", approval, consume=True)
+        if not entry:
+            return self.page("<p>Consent already used. Restart the connection from your client.</p>", 403)
+        response = self.finish(entry["transaction"], entry["workspace"])
+        response.delete_cookie("mh_approval", secure=True, httponly=True, samesite="lax")
+        return response
 
     async def revoke(self, request):
         try:
@@ -364,7 +385,7 @@ class NativeAuth:
             *[route for route in sdk_routes if route.path not in {
                 "/.well-known/oauth-authorization-server", "/revoke"}],
             Route("/oauth/consent", self.consent, methods=["GET", "POST"]),
-            Route("/oauth/google-consent", self.google_consent, methods=["POST"]),
+            Route("/oauth/google-consent", self.google_consent, methods=["GET", "POST"]),
             Route("/auth/google/start", self.google_start),
             Route("/auth/google/callback", self.google_callback),
         ]

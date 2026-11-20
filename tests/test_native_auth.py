@@ -116,6 +116,32 @@ class NativeAuthTests(unittest.TestCase):
         self.assertEqual(self.client.post(url, data={"workspace_token": self.token},
                                          headers={"Origin": "https://bridge.example"}).status_code, 403)
 
+    def test_google_consent_uses_dedicated_cookie_and_one_use_approval(self):
+        from handoff.native_auth import NativeAuth, digest
+        auth = NativeAuth(self.store, [(self.token, "owner")], {"owner"})
+        auth.put("pending", "google-test", {"client_name": "ChatGPT", "web_login": True}, 600)
+        auth.put("google_consent", "approval-test", {
+            "transaction": "google-test", "workspace": "owner", "binder": digest("approval-cookie")
+        }, 300)
+        c = self.client
+        url = "/oauth/google-consent?approval=approval-test"
+        self.assertEqual(c.get(url).status_code, 403)
+        self.assertEqual(c.post("/oauth/google-consent", data={"approval": "approval-test"},
+                               headers={"Origin": "https://bridge.example"}).status_code, 403)
+        # A bad cookie must not burn a still-valid approval.
+        c.cookies.set("mh_approval", "approval-cookie")
+        c.cookies.set("mh_google", "another-login-tab")
+        page = c.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("Connect ChatGPT?", page.text)
+        self.assertEqual(c.post("/oauth/google-consent", data={"approval": "approval-test"},
+                               headers={"Origin": "https://attacker.example"}).status_code, 403)
+        granted = c.post("/oauth/google-consent", data={"approval": "approval-test"},
+                         headers={"Origin": "https://bridge.example"})
+        self.assertEqual(granted.status_code, 303)
+        self.assertEqual(c.post("/oauth/google-consent", data={"approval": "approval-test"},
+                               headers={"Origin": "https://bridge.example"}).status_code, 403)
+
     def test_google_identity_verification_requires_nonce_audience_and_invitation(self):
         import jwt
         from cryptography.hazmat.primitives.asymmetric import rsa
