@@ -2,6 +2,23 @@
 
 A Python MCP server and CLI that let GPT and Gemini delegate work to each other. The built-in demo fixes small Python data transformations and scores the final candidate against expected outputs.
 
+## Deployment milestone completed — 20 November 2026
+
+The web workspace is deployed at **https://model-handoff-mcp.onrender.com/**.
+The authenticated remote MCP endpoint is **https://model-handoff-mcp.onrender.com/mcp**.
+
+Completed and checked: live GPT-OSS via Groq ↔ Gemini handoffs, Google workspace
+sign-in (user-confirmed), Neon PostgreSQL storage, saved history after refresh
+and redeployment, persistent background jobs, request/token/concurrency limits,
+and native MCP OAuth implementation. The latest automated run passed **27 tests**.
+
+**Native ChatGPT connection is still awaiting a successful authorization retry
+and first tool call.** Consent origin and cookie-lifecycle fixes are deployed;
+passing protocol tests does not establish native-client success. Claude and
+Gemini native application connections are also unverified.
+
+See [STATUS.md](STATUS.md) for completed scope, evidence, and remaining work.
+
 ## Features
 
 - **Two-way delegation.** Either model drafts a solution, asks the other to review it, and uses the review in its final answer.
@@ -348,8 +365,8 @@ service to support the intended clients and issue access tokens for this resourc
 Codex and clients supporting bearer headers can use the workspace token directly.
 ChatGPT, Claude, and Gemini application availability and authorization support
 must be verified with the user's actual account. A successful protocol test
-does not establish that all native applications can connect. The external OAuth
-service and native Google sign-in have not been configured or verified live.
+does not establish that all native applications can connect. Native Google sign-in is now configured and user-confirmed. An external OAuth
+service is optional because the server includes native MCP OAuth.
 
 ### Verification record
 
@@ -360,18 +377,15 @@ token audience, scope, expiry, and subject checks. A separate HTTP process was
 started and exercised through a real localhost MCP request using offline
 providers.
 
-Live provider calls, hosted OAuth discovery/login, native chat applications,
-container execution, and hosted persistence still require deployment credentials
-and platform verification. Image analysis, Drive, and general external MCP
-connectors remain pending.
+The deployment milestone supersedes the earlier local-only verification:
+real Groq/Gemini calls, hosted discovery, Google website login, deployed Docker
+startup and PostgreSQL persistence have now been exercised. Native ChatGPT,
+Claude and Gemini application tool calls remain unverified. Image analysis,
+Drive and general external MCP connectors remain pending.
 
-Browser interaction verification was attempted in this environment. Chromium
-failed to launch because socket creation was denied. JavaScript syntax passed.
-Container execution remains unverified because Docker is unavailable.
-
-Release verification completed with 19 passing automated tests and 72 scored
-offline benchmark trials. Offline results test orchestration and scoring, and
-provide no evidence of live model quality.
+The latest test run passed 27 automated tests. Earlier evaluation included
+72 scored offline benchmark trials; fixtures provide no evidence of live model
+quality. See STATUS.md for the current release record.
 
 ## 0.3 deployment: persistent storage and native OAuth
 
